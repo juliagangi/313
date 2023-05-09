@@ -73,7 +73,7 @@ void loop() {
         std::vector<int> vec(millis(),intensity);
         plot.push_back(vec);
         prevlights = numlights;
-        delay(currdelay);
+        delay(2000);
         for (int i = 0; i < numlights; i++) {
           uint8_t color1 = 255;
           uint8_t color2 = 255;
