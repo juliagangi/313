@@ -24,21 +24,18 @@ void loop() {
     bool enterloop = false;
     bool withdrawals = false;
     int previntensity;
-    int intensity;
+    float intensity;
     int numlights = 10;
     int prevlights = 10;
     int timeelapsed;
     delay(150);
     // play happy sound
     while (true) {
-      Serial.println("true");
       if (digitalRead(5)) {
         break;
       }
       while (noiseplaying) {
-        Serial.println("waiting");
         if (digitalRead(4)) {
-          Serial.println("got 4");
           enterloop = true;
           break;
         }
@@ -50,9 +47,15 @@ void loop() {
         Serial.println("in loop");
         dose = dose + 1;
         timeelapsed = millis() - currtime;
-        intensity = .95-(dose*.05*abs(20000-timeelapsed)*prevlights/40000);
-        Serial.println(intensity);
+        Serial.println("time elapsed");
         Serial.println(timeelapsed);
+        Serial.println("prevlights");
+        Serial.println(prevlights);
+        Serial.println("dose");
+        Serial.println(dose);
+        intensity = .95-(dose*.05*abs(20000-timeelapsed)/40000) - .05*(10-prevlights);
+        Serial.println("intensity");
+        Serial.println(intensity);
         if (dose < 3) {
           intensity = 1;
         }
@@ -60,11 +63,10 @@ void loop() {
           withdrawals = true;
           // re-assign noise
         }
-        currtime = millis(); 
-        numlights = ceil(intensity*10);
+        numlights = round(intensity*10);
+        Serial.println("# lights");
         Serial.println(numlights);
         for (int i = 0; i < numlights; i++) {
-          Serial.println("in lights loop");
           uint8_t color1;
           uint8_t color2;
           uint8_t color3;
@@ -80,23 +82,21 @@ void loop() {
           }
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
-        Serial.println("out of lights loop");
         delay(4000);
         for (int i = 0; i < numlights; i++) {
-          Serial.println("turning lights white");
           uint8_t color1 = 255;
           uint8_t color2 = 255;
           uint8_t color3 = 255;
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         } 
-        Serial.println("done with colors");
-        currdelay = currdelay - 1000; 
+        currdelay = currdelay - 1000; // make more complicated
         if (dose < 3) {
           currdelay = 0;
         }
         if (dose == 3) {
           currdelay = 10000;
         }
+        currtime = millis(); 
         times.push_back(currtime);
         intensities.push_back(intensity);
         prevlights = numlights;
@@ -107,7 +107,7 @@ void loop() {
           Serial.println("withdrawal noise");
         }
         if (!withdrawals) {
-          Serial.println("not withdrawal noise");
+          Serial.println("happy noise");
         }
         Serial.println("end of loop");
         continue;
