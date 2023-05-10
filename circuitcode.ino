@@ -44,6 +44,8 @@ void loop() {
         dose = dose + 1;
         timeelapsed = millis() - currtime;
         intensity = .95-(dose*.05*abs(20000-timeelapsed)*prevlights/40000);
+        Serial.println(intensity);
+        Serial.println(timeelapsed);
         if (dose < 3) {
           intensity = 1;
         }
@@ -51,7 +53,9 @@ void loop() {
           withdrawals = true;
           // re-assign noise
         }
+        currtime = millis(); 
         numlights = ceil(intensity*10);
+        Serial.println(numlights);
         for (int i = 0; i < numlights; i++) {
           Serial.println("in lights loop");
           uint8_t color1;
@@ -69,21 +73,25 @@ void loop() {
           }
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
-        currdelay = currdelay - 1000; 
-        if (dose < 3) {
-          currdelay = 0;
-        }
-        currtime = millis(); 
-        std::vector<int> vec(millis(),intensity);
-        plot.push_back(vec);
-        prevlights = numlights;
+        Serial.println("out of lights loop");
         delay(2000);
         for (int i = 0; i < numlights; i++) {
+          Serial.println("turning lights white");
           uint8_t color1 = 255;
           uint8_t color2 = 255;
           uint8_t color3 = 255;
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         } 
+        currdelay = currdelay - 1000; 
+        if (dose < 3) {
+          currdelay = 0;
+        }
+        if (dose == 3) {
+          currdelay = 10000;
+        }
+        std::vector<int> vec(currtime,intensity);
+        plot.push_back(vec);
+        prevlights = numlights;
       }     
       if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
         // play noise
