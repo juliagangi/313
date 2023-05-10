@@ -29,6 +29,7 @@ void loop() {
     int timeelapsed;
     // play happy sound
     while (true) {
+      Serial.println("true");
       if (digitalRead(5)) {
         break;
       }
@@ -43,14 +44,14 @@ void loop() {
         dose = dose + 1;
         timeelapsed = millis() - currtime;
         intensity = .95-(dose*.05*abs(20000-timeelapsed)*prevlights/40000);
-        numlights = ceil(intensity);
         if (dose < 3) {
-          intensity = 100;
+          intensity = 1;
         }
         if (dose == 3) { // noise switches to annoying
           withdrawals = true;
           // re-assign noise
         }
+        numlights = ceil(intensity*10);
         for (int i = 0; i < numlights; i++) {
           Serial.println("in lights loop");
           uint8_t color1;
@@ -69,6 +70,9 @@ void loop() {
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
         currdelay = currdelay - 1000; 
+        if (dose < 3) {
+          currdelay = 0;
+        }
         currtime = millis(); 
         std::vector<int> vec(millis(),intensity);
         plot.push_back(vec);
