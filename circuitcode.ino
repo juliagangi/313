@@ -6,7 +6,7 @@
 void setup() {
   CircuitPlayground.begin();
   pinMode(13, OUTPUT);
-  pinMode(4, INPUT);
+  pinMode(4, INPUT_PULLDOWN);
   pinMode(5, INPUT_PULLDOWN);
   Serial.begin(9600);
 }
@@ -74,7 +74,7 @@ void loop() {
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
         Serial.println("out of lights loop");
-        delay(2000);
+        delay(4000);
         for (int i = 0; i < numlights; i++) {
           Serial.println("turning lights white");
           uint8_t color1 = 255;
