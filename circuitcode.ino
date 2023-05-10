@@ -27,6 +27,7 @@ void loop() {
     int numlights = 10;
     int prevlights = 10;
     int timeelapsed;
+    delay(150);
     // play happy sound
     while (true) {
       Serial.println("true");
@@ -92,6 +93,7 @@ void loop() {
         std::vector<int> vec(currtime,intensity);
         plot.push_back(vec);
         prevlights = numlights;
+        Serial.println("end of loop");
       }     
       if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
         // play noise
