@@ -35,13 +35,18 @@ void loop() {
       if (digitalRead(5)) {
         break;
       }
-      if (noiseplaying) {
+      while (noiseplaying) {
+        Serial.println("waiting");
         if (digitalRead(4)) {
+          Serial.println("got 4");
           enterloop = true;
+          break;
         }
       }
       if (digitalRead(4) || enterloop) {
         // stop noise
+        noiseplaying = false;
+        enterloop = false;
         Serial.println("in loop");
         dose = dose + 1;
         timeelapsed = millis() - currtime;
