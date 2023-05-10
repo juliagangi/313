@@ -35,6 +35,7 @@ void loop() {
         break;
       }
       while (noiseplaying) {
+        
         if (digitalRead(4)) {
           enterloop = true;
           break;
