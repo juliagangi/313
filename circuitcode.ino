@@ -13,7 +13,8 @@ void setup() {
 
 void loop() {
   digitalWrite(13, LOW);
-  std::vector<std::vector<int>> plot;
+  std::vector<std::vector<int>> times;
+  std::vector<std::vector<int>> intensities;
   if (digitalRead(4)) {
     Serial.println("in initial loop");
     int dose = 0;
@@ -83,6 +84,7 @@ void loop() {
           uint8_t color3 = 255;
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         } 
+        Serial.println("done with colors");
         currdelay = currdelay - 1000; 
         if (dose < 3) {
           currdelay = 0;
@@ -90,24 +92,34 @@ void loop() {
         if (dose == 3) {
           currdelay = 10000;
         }
-        std::vector<int> vec(currtime,intensity);
-        plot.push_back(vec);
+        times.push_back(currtime);
+        intensities.push_back(intensity);
         prevlights = numlights;
-        Serial.println("end of loop");
-      }     
-      if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
-        // play noise
-        Serial.println("noise starting");
+        delay(currdelay);
+        // start noise
+        noiseplaying = true;
         if (withdrawals) {
-          int x = 1;
+          Serial.println("withdrawal noise");
+        }
+        if (!withdrawals) {
+          Serial.println("not withdrawal noise")''
+        }
+        Serial.println("end of loop");
+        continue
+      }     
+      //if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
+        // play noise
+      //  Serial.println("noise starting");
+      //  if (withdrawals) {
+      //    int x = 1;
           // play annoying noise
-        }
-        else {
-          int x = 1;
+      //  }
+      //  else {
+      //    int x = 1;
           // play happy noise
-        }
-        bool startnoise = true;
-      }
+      //  }
+      //  bool startnoise = true;
+      //}
     }
   }
     //uint8_t color1 = 0;
