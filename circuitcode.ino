@@ -13,8 +13,8 @@ void setup() {
 
 void loop() {
   digitalWrite(13, LOW);
-  std::vector<std::vector<int>> times;
-  std::vector<std::vector<int>> intensities;
+  std::vector<int> times;
+  std::vector<int> intensities;
   if (digitalRead(4)) {
     Serial.println("in initial loop");
     int dose = 0;
@@ -102,10 +102,10 @@ void loop() {
           Serial.println("withdrawal noise");
         }
         if (!withdrawals) {
-          Serial.println("not withdrawal noise")''
+          Serial.println("not withdrawal noise");
         }
         Serial.println("end of loop");
-        continue
+        continue;
       }     
       //if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
         // play noise
