@@ -162,11 +162,9 @@ void loop() {
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
         delay(duration);
-        Serial.println(numlights);
         for (int i = 0; i < numlights; i++) {
           CircuitPlayground.setPixelColor(i, 0, 0, 0);
         } 
-        Serial.println(currdelay);
         delay(currdelay);
         currtime = millis();
         for (int i = 0; i < numlights; i++) {
