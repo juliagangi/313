@@ -134,21 +134,14 @@ void loop() {
         }
         for (int i = 0; i < 10; i++) {
           if (i % 2 == 0) {
-            color1 = 255;
-            color2 = 255;
-            color3 = 0;
+            CircuitPlayground.setPixelColor(i, 255, 255, 0);
           }
           else {
-            color1 = 255;
-            color2 = 16;
-            color3 = 240;
+            CircuitPlayground.setPixelColor(i, 255, 16, 240);
           }
           if (i >= numlights) {
-            color1 = 0;
-            color2 = 0;
-            color3 = 0;
+            CircuitPlayground.setPixelColor(i, 0, 0, 0);
           }
-          CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
         delay(duration);
         for (int i = 0; i < numlights; i++) {
