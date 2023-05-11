@@ -8,10 +8,11 @@ void setup() {
   pinMode(13, OUTPUT);
   pinMode(4, INPUT_PULLDOWN);
   pinMode(5, INPUT_PULLDOWN);
-  CircuitPlayground.strip.setBrightness(100);
+  CircuitPlayground.strip.setBrightness(100); // test this
   Serial.begin(9600);
 }
 
+// FREQUENCIES
 #define NOTE_C4  262
 #define NOTE_CS4 277
 #define NOTE_D4  294
@@ -37,10 +38,8 @@ void setup() {
 #define NOTE_AS5 932
 #define NOTE_B5  988
 
-
-// Define note durations.  You only need to adjust the whole note
-// time and other notes will be subdivided from it directly.
-#define WHOLE         2200       // Length of time in milliseconds of a whole note (i.e. a full bar).
+// DURATIONS
+#define WHOLE         2200.
 #define HALF          WHOLE/2
 #define QUARTER       HALF/2
 #define EIGHTH        QUARTER/2
@@ -48,15 +47,10 @@ void setup() {
 #define SIXTEENTH     EIGHTH/2
 
 void playNote(int frequency, int duration, bool hold=false) {
-  if (!CircuitPlayground.slideSwitch()) {
-    return;
-  }
   if (hold) {
-    // For a note that's held play it a little longer so it blends into the next tone 
-    CircuitPlayground.playTone(frequency, duration + duration/32, false);
+    CircuitPlayground.playTone(frequency, duration+duration/32, false);
   }
   else {
-    // For a note that isn't held just play it for the specified duration.
     CircuitPlayground.playTone(frequency, duration, false);
   }
 }
@@ -92,21 +86,16 @@ void loop() {
         break;
       }
       while (noiseplaying) {
-        // for (int i=0; i<notes.size(); i++) {
-        //   for (int j = 0; j < 3; j++) {
-        //     playNote(notes[i],durations[i]/3);
-        //     if (digitalRead(4)) {
-        //       enterloop = true;
-        //       noiseplaying = false;
-        //       break;
-        //     }
-        //   }
-        // }
-        if (digitalRead(4)) {
-              enterloop = true;
-              noiseplaying = false;
-              break;
-        }
+         for (int i=0; i<notes.size(); i++) {
+           for (int j = 0; j < 3; j++) {
+             playNote(notes[i],durations[i]/3);
+             if (digitalRead(4)) {
+               enterloop = true;
+               noiseplaying = false;
+               break;
+             }
+           }
+         }
       }
       if (digitalRead(4) || enterloop) {
         enterloop = false;
@@ -174,7 +163,6 @@ void loop() {
         intensities.push_back(intensity);
         Serial.println("Intensity");
         Serial.println(intensity);
-        //prevlights = numlights;
         noiseplaying = true;
       }     
     }
