@@ -8,6 +8,7 @@ void setup() {
   pinMode(13, OUTPUT);
   pinMode(4, INPUT_PULLDOWN);
   pinMode(5, INPUT_PULLDOWN);
+  CircuitPlayground.strip.setBrightness(100);
   Serial.begin(9600);
 }
 
@@ -65,21 +66,28 @@ void loop() {
   std::vector<int> durations = {EIGHTH,EIGHTH,QUARTER,QUARTER,QUARTER,HALF};
   std::vector<int> times;
   std::vector<int> intensities;
+  for (int i = 0; i < 10; i++) {
+    CircuitPlayground.setPixelColor(i, 0, 0, 0);
+  }
   if (digitalRead(4)) {
     int dose = 0;
-    int currdelay = 10000;
+    int currdelay = 5000;
+    int duration = 4000;
     int currtime;
     bool noiseplaying = false;
     bool enterloop = false;
     bool withdrawals = false;
-    int previntensity;
     float intensity;
     int numlights = 10;
     int prevlights = 10;
     int timeelapsed;
+    uint8_t color1;
+    uint8_t color2;
+    uint8_t color3;
     delay(150);
+    bool loopvar = true;
     // play happy sound
-    while (true) {
+    while (loopvar) {
       if (digitalRead(5)) {
         break;
       }
@@ -101,28 +109,41 @@ void loop() {
         }
       }
       if (digitalRead(4) || enterloop) {
-        // stop noise
-        //noiseplaying = false;
         enterloop = false;
         dose = dose + 1;
         timeelapsed = millis() - currtime;
         //intensity = .95-(dose*.05*abs(20000-timeelapsed)/40000) - .05*(10-prevlights);
-        intensity = 1 - .05*dose;
-        if (dose == 1) {
+        intensity = intensity - .05 + .03*(timeelapsed/10000); 
+        duration = duration - 200 + timeelapsed/200;
+        if (intensity > 1) {
           intensity = 1;
         }
-        if (dose == 3) { // noise switches to annoying
+        currdelay = currdelay - 500 + timeelapsed/20;
+        if (currdelay < 0) {
+          currdelay = 0;
+        } 
+        if (dose == 1) {
+          intensity = 1;
+          currdelay = 0;
+        }
+        if (dose == 2) {
+          currdelay = 0;
+        }
+        if (dose == 3) {
           withdrawals = true;
+          currdelay = 10000;
           // re-assign noise
         }
-        if (timeelapsed > 20000) {
-          intensity = intensity + .05;
-        }
         numlights = round(intensity*10);
+        if (numlights == 0) {
+          for (int i = 0; i < 10; i++) {
+            CircuitPlayground.setPixelColor(i, 255, 0, 0);
+          }
+          delay(4000);
+          loopvar = false;
+          break; 
+        }
         for (int i = 0; i < 10; i++) {
-          uint8_t color1;
-          uint8_t color2;
-          uint8_t color3;
           if (i % 2 == 0) {
             color1 = 255;
             color2 = 255;
@@ -140,35 +161,23 @@ void loop() {
           }
           CircuitPlayground.setPixelColor(i, color1, color2, color3);
         }
-        delay(4000);
+        delay(duration);
+        Serial.println(numlights);
         for (int i = 0; i < numlights; i++) {
-          uint8_t color1 = 255;
-          uint8_t color2 = 255;
-          uint8_t color3 = 255;
-          CircuitPlayground.setPixelColor(i, color1, color2, color3);
+          CircuitPlayground.setPixelColor(i, 0, 0, 0);
         } 
-        currdelay = currdelay - 1000; // make more complicated
-        if (dose < 3) {
-          currdelay = 0;
-        }
-        if (dose == 3) {
-          currdelay = 10000;
-        }
-        //currtime = millis(); 
+        Serial.println(currdelay);
         delay(currdelay);
         currtime = millis();
+        for (int i = 0; i < numlights; i++) {
+          CircuitPlayground.setPixelColor(i, 255, 255, 255);
+        } 
         times.push_back(currtime);
         intensities.push_back(intensity);
+        Serial.println("Intensity");
         Serial.println(intensity);
-        prevlights = numlights;
-        // start noise
+        //prevlights = numlights;
         noiseplaying = true;
-        //if (withdrawals) {
-        //  Serial.println("withdrawal noise");
-        //}
-        //if (!withdrawals) {
-        //  Serial.println("happy noise");
-        //}
       }     
     }
   }
