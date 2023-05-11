@@ -84,15 +84,20 @@ void loop() {
         break;
       }
       while (noiseplaying) {
-        for (int i=0; i<notes.size(); i++) {
-          for (int j = 0; j < 3; j++) {
-            playNote(notes[i],durations[i]/3);
-            if (digitalRead(4)) {
+        // for (int i=0; i<notes.size(); i++) {
+        //   for (int j = 0; j < 3; j++) {
+        //     playNote(notes[i],durations[i]/3);
+        //     if (digitalRead(4)) {
+        //       enterloop = true;
+        //       noiseplaying = false;
+        //       break;
+        //     }
+        //   }
+        // }
+        if (digitalRead(4)) {
               enterloop = true;
               noiseplaying = false;
               break;
-            }
-          }
         }
       }
       if (digitalRead(4) || enterloop) {
@@ -101,16 +106,17 @@ void loop() {
         enterloop = false;
         dose = dose + 1;
         timeelapsed = millis() - currtime;
-        if (timeelapsed > 20000) {
-          prevlights = prevlights + 1; 
-        }
-        intensity = .95-(dose*.05*abs(20000-timeelapsed)/40000) - .05*(10-prevlights);
-        if (dose < 3) {
+        //intensity = .95-(dose*.05*abs(20000-timeelapsed)/40000) - .05*(10-prevlights);
+        intensity = 1 - .05*dose;
+        if (dose == 1) {
           intensity = 1;
         }
         if (dose == 3) { // noise switches to annoying
           withdrawals = true;
           // re-assign noise
+        }
+        if (timeelapsed > 20000) {
+          intensity = intensity + .05;
         }
         numlights = round(intensity*10);
         for (int i = 0; i < 10; i++) {
@@ -148,39 +154,22 @@ void loop() {
         if (dose == 3) {
           currdelay = 10000;
         }
-        currtime = millis(); 
+        //currtime = millis(); 
+        delay(currdelay);
+        currtime = millis();
         times.push_back(currtime);
         intensities.push_back(intensity);
+        Serial.println(intensity);
         prevlights = numlights;
-        delay(currdelay);
         // start noise
         noiseplaying = true;
-        if (withdrawals) {
-          Serial.println("withdrawal noise");
-        }
-        if (!withdrawals) {
-          Serial.println("happy noise");
-        }
-        continue;
+        //if (withdrawals) {
+        //  Serial.println("withdrawal noise");
+        //}
+        //if (!withdrawals) {
+        //  Serial.println("happy noise");
+        //}
       }     
-      //if (millis() > currtime + currdelay) { // start noise; don't need this if bc delaying inside if
-        // play noise
-      //  Serial.println("noise starting");
-      //  if (withdrawals) {
-      //    int x = 1;
-          // play annoying noise
-      //  }
-      //  else {
-      //    int x = 1;
-          // play happy noise
-      //  }
-      //  bool startnoise = true;
-      //}
     }
   }
-    //uint8_t color1 = 0;
-    //uint8_t color2 = 0;
-    //uint8_t color3 = 0;
-    //CircuitPlayground.slideSwitch()
-    //CircuitPlayground.setPixelColor(i, color1,   color2,   color3);
 }
